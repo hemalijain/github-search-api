@@ -1,0 +1,45 @@
+
+<div class="container">
+<div class="card-columns" >
+  <% @results.each do |category, results| %>
+    <div id = <%=category %> class="col-md-4">
+      <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          <h5 class="card-title">Search results in <%= category %>
+
+          <span class="counter"><%= results.first[:total_count]  %></span></h5>
+        </div>
+        <ul class="list-group list-group-flush">
+          <% results.first[:items].each do |item| %>
+
+          <li class="list-group-item"><%=link_to item["login"] || item["title"] || item["full_name"], item['html_url'] %>
+          <%= image_tag(item["avatar_url"] || item.try(:user).try(:avatar_url) || item.try("owner").try("avatar_url"), class: "avatar avatar-16 img-circle")%>
+
+          </li>
+
+          <% end %>
+        </ul>
+        <% params[:page]= params[:page] || 1 %>
+        <div class="card-body">
+          <nav aria-label="Page navigation example">
+            <ul class="pagination">
+
+              <% unless params[:page]== 1 %>
+                <li class="page-item"><%= link_to "Prev", search_item_path(category: category, search: params["search"], page: params[:page].to_i-1), class:'page-link', remote: true %></li>
+              <% end %>
+              <% if results.last.to_i > params[:page].to_i %>
+                <li class="page-item"><%= link_to "Next", search_item_path(category: category, search: params["search"], page: params[:page].to_i+1), class:'page-link', remote: true %></li>
+                </br>
+              <% end  %>
+            </ul>
+            <% unless params[:page] == 0 || results.last.to_i == 0 %>
+              <div> Page <%=params[:page]  %> of <%=results.last.to_i  %></div>
+            <% end %>
+          </nav>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+</div>
+</div>
